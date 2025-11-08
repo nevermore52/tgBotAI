@@ -27,7 +27,7 @@ func NewGenaiChat() (*GenaiChat, error){
 }
 
 func (o GenaiChat) GenaiChatting(text string) string {
-	result, err := o.client.Models.GenerateContent(o.ctx, "gemini-2.5-flash-lite", genai.Text(text), nil)
+	result, err := o.client.Models.GenerateContent(o.ctx, "gemini-2.5-flash", genai.Text(text), nil)
 	if err != nil {
 		log.Fatal(err)
 	}

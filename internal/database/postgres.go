@@ -47,8 +47,10 @@ func (p *Postgres) AddAccount(user User) string {
 	return tmp
 }
 func (p *Postgres) CheckUser(chatId int64) (bool) {
-	_, err := p.DB.Query("SELECT * FROM users WHERE chat_id = $1", chatId)
-	if err != nil {
+	res  := p.DB.QueryRow("SELECT chat_id FROM users WHERE chat_id = $1", chatId)
+	check := ""
+	res.Scan(&check)
+	if check == "" {
 		return false
 	}
 	return true

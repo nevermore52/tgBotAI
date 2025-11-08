@@ -59,15 +59,18 @@ func (tg *Tgbot) StartBot() {
 		switch update.Message.Command() {
 		case "start":
 			{
-				err := tg.DB.AddAccount(database.User{
+				user := tg.DB.CheckUser(update.Message.Chat.ID)
+				if user {
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Вы использовали команду /start, но вы уже зарегистрированы.")
+					bot.Send(msg)
+				} else {
+				tg.DB.AddAccount(database.User{
 					Chatid: update.Message.Chat.ID,
 					Username: update.Message.Chat.UserName,
 					Requests: 5,
 					Admin: 0,})
-				if err != "" {
-					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Вы использовали команду /start, но вы уже зарегистрированы.")
-					bot.Send(msg)
 				}
+
 			}
 		case "settings":
 			{
