@@ -1,4 +1,4 @@
-package genai
+package ai
 
 import (
 	"context"
@@ -32,7 +32,10 @@ func (o *GenaiChat) GenaiChatting(text string, id int64) string {
 	currentTime := time.Now()
 	currentDate := currentTime.Format("2006-01-02")
 	currentDateTime := currentTime.Format("2006-01-02 15:04:05")
-	o.messageList[id] = append(o.messageList[id], &request.Message{Role: "system", Content: fmt.Sprintf("Ты полезный ассистент. Текущая дата: %s. Текущее время: %s Сегодня Отвечай на вопросы с учетом актуальной даты и времени.", currentDate, currentDateTime)})
+	o.messageList[id] = append(o.messageList[id], &request.Message{Role: "system", Content: fmt.Sprintf(
+		`Ты полезный ассистент. Текущая дата: %s. Текущее время: %s
+		 Отвечай на вопросы с учетом актуальной даты и времени.`,
+		 currentDate, currentDateTime)})
 	o.messageList[id] = append(o.messageList[id], &request.Message{Role: "user", Content: text})
 	chatReq := &request.ChatCompletionsRequest{
 		Model: deepseek.DEEPSEEK_CHAT_MODEL,

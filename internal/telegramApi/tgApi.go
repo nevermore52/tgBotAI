@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 	"tgbot/internal/database"
-	"tgbot/internal/genai"
+	"tgbot/internal/AI"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/joho/godotenv"
@@ -26,7 +26,7 @@ func (tg *Tgbot) StartBot() {
 	if err != nil {
 		log.Panic(err)
 	}
-	gemini, err := genai.NewGenaiChat(os.Getenv("DEEPSEEK_APIKEY"))
+	gemini, err := ai.NewGenaiChat(os.Getenv("DEEPSEEK_APIKEY"))
 
 	bot.Debug = false
 
@@ -37,6 +37,21 @@ func (tg *Tgbot) StartBot() {
 	
 	
 	updates := bot.GetUpdatesChan(u)
+
+
+	cmdCfg := tgbotapi.NewSetMyCommands(
+		tgbotapi.BotCommand{
+			Command:     "/start",
+			Description: "Комадна для запуска бота.",
+		},
+		tgbotapi.BotCommand{
+			Command:     "/info",
+			Description: "Информация о боте и колличестве запросов.",
+		},
+	)
+	bot.Send(cmdCfg)
+	
+
 
 
 	for update := range updates {
@@ -66,7 +81,7 @@ func (tg *Tgbot) StartBot() {
 			{
 				user := tg.DB.CheckUser(update.Message.Chat.ID)
 				if user {
-					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Вы использовали команду /start, но вы уже зарегистрированы.")
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Приветствую вас, вы можете задать любой вопрос в чат.")
 					bot.Send(msg)
 				} else {
 				tg.DB.AddAccount(database.User{
@@ -74,12 +89,16 @@ func (tg *Tgbot) StartBot() {
 					Username: update.Message.Chat.UserName,
 					Requests: 5,
 					Admin: 0,})
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Приветствую вас, вы можете задать любой вопрос в чат .")
+					bot.Send(msg)
 				}
 
 			}
-		case "settings":
+		case "info":
 			{
-				
+				req := tg.DB.CheckRequests(update.Message.Chat.ID)
+				msg := tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("У вас осталось: %d запросов.", req))
+				bot.Send(msg)
 			}
 		}
 	}
