@@ -25,7 +25,7 @@ func NewGenaiChat(apikey string) (*GenaiChat, error){
 	return &GenaiChat{
 		client: deepseek,
 		messageList: make(map[int64][]*request.Message),
-}, nil
+	}, nil
 }
 
 func (o *GenaiChat) GenaiChatting(text string, id int64) string {

@@ -17,6 +17,6 @@ type Postgres struct {
 type User struct {
 	Chatid 		int64
 	Username	string
-	Requests		int
+	Requests	int
 	Admin		int
 }
